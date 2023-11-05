@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import EnterDataPage from "./components/EnterDataPage";
 import LandPage from "./components/LandPage";
+import Dashboard from "./components/Dashoard";
   
 const root = createRoot(document.getElementById('app'));
 
@@ -16,6 +17,7 @@ function AppRouter() {
           <Route path="home" element={<App />} />
           <Route path="enterdata" element={<EnterDataPage/>}/>
           <Route path="" element={<LandPage/>}/>
+          <Route path="dashboard" element={<Dashboard />} />
           {/* TODO: move below to user checking routes */}
         </Routes>
       </BrowserRouter>
