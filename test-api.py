@@ -3,7 +3,7 @@ import openfoodfacts
 api = openfoodfacts.API(version="v2")
 
 # Set a longer timeout, for example, 30 seconds
-#currently 60 seconds
+# Currently 60 seconds
 
 results = api.product.text_search("tomato paste")
 
