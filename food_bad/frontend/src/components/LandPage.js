@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
@@ -12,6 +12,14 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 import MenuItem from '@mui/material/MenuItem';
+import { Container, formHelperTextClasses } from '@mui/material';
+import AdbIcon from '@mui/icons-material/Adb';
+import Tooltip from '@mui/material/Tooltip';
+
+import CircularProgress from '@mui/material/CircularProgress';
+
+import { useNavigate } from 'react-router-dom';
+
 
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -20,13 +28,17 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { Avatar, Grid, ListItemText, Stack,ListItemIcon, Paper, Divider } from '@mui/material';
 import {Button} from '@mui/material';
 
+const pages = ['Products', 'Pricing', 'Blog'];
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
 
 const useStyles = makeStyles((theme) => ({
     circularAppBar: {
       borderRadius: '30px',
-      width: '2px', // You can adjust the width to make it larger or smaller
+      // width: '2px', // You can adjust the width to make it larger or smaller
       height: '80%', // Adjust the height accordingly
       display: 'flex',
+      flexDirection:'column',
       justifyContent: 'center',
       alignItems: 'center',
       margin: '10 auto',
@@ -45,102 +57,261 @@ const useStyles = makeStyles((theme) => ({
   }));
   
 
-const NavBar = () => {
-    const classes = useStyles();
-    return (
-        <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static" sx={{backgroundColor:'#FFFFFC'}} 
-          className={classes.circularAppBar}
-          justifyContent="center" alignItems="center">
-            <Toolbar>
-            <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  mr: 2,
-                  display: { xs: 'none', md: 'flex' },
-                  fontFamily: 'monospace',
-                  fontWeight: 700,
-                  letterSpacing: '.3rem',
-                  color: '#073B3A',
-                  textDecoration: 'none',
-                }}
-              >
-                ENVIMPACT
-              </Typography>
-              <Box sx={{ flexGrow: 0.1 }} />
-              {/* the &>* targets all direct children of the box */}
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:'10%'}}>
-              <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography className = {classes.hoverTextButton}><strong>TODOs</strong></Typography>
-                </span>
-                <IconButton size="large" color="inherit">
-                  <FavoriteIcon className={classes.greyIcon}/>
-                </IconButton>
-                {/* Messages icon */}
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                  <Badge badgeContent={4} color="error">
-                    <MailIcon className={classes.greyIcon}/>
-                  </Badge>
-                </IconButton>
-                {/* Notifications icon */}
-                <IconButton
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                >
-                  <Badge badgeContent={17} color="error">
-                    <NotificationsIcon className={classes.greyIcon}/>
-                  </Badge>
-                </IconButton>
-                {/* Orders icon */}
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography className = {classes.hoverTextButton}><strong>Orders</strong></Typography>
-                </span>
-              </Box>
-              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                  size="large"
-                  aria-label="show more"
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <MoreIcon />
-                </IconButton>
-              </Box>
-            </Toolbar>
-          </AppBar>
+function NavBar() {
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-        </Box>
-      );
-}
-
-const CircularAppBar = () => {
-    const classes = useStyles();
-    const theme = useTheme();
-  
-    return (
-      <div>
-        <AppBar className={classes.circularAppBar} position="static">
-          <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu">
-              {/* Your menu icon */}
-            </IconButton>
-            <Typography variant="h6" component="div">
-              Circular AppBar
-            </Typography>
-            {/* You can add more AppBar contents here */}
-          </Toolbar>
-        </AppBar>
-      </div>
-    );
+const getGPTResponse = () => {
+    fetch(`/api/condense-ingredients?ingredients=${"['1Â½ lb. skinless, boneless chicken thighs (4â€“8 depending on size)', 'Kosher salt, freshly ground pepper', '3 Tbsp. unsalted butter, divided', '2 large or 3 medium leeks, white and pale green parts only, halved lengthwise, thinly sliced', 'Zest and juice of 1 lemon, divided', '1Â½ cups long-grain white rice, rinsed until water runs clear', '2Â¾ cups low-sodium chicken broth', '1 oil-packed anchovy fillet', '2 garlic cloves', '1 Tbsp. drained capers', 'Crushed red pepper flakes', '1 cup tender herb leaves (such as parsley, cilantro, and/or mint)', '4â€“5 Tbsp. extra-virgin olive oil']"}`).then((response)=>response.json()).then((data)=>
+    {
+      console.log("RECEIVED GPT INPUT:")
+      console.log(data['answer'])
+  })
   }
 
-const LandingPage = () => {
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+    const classes = useStyles();
     return (
+      <AppBar position="static" className={classes.circularAppBar} sx={{
+        backgroundColor: "#FFFFFF", // You can adjust the shade (e.g., 200) to control the grey level
+        marginTop:'5%'
+     }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 , color:'#FFFFFF'}} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'black',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
+
+          <Box >
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu} sx={{color:'black'}}>
+                  <Typography  variant="h6"
+                    noWrap
+                    component="a"
+                    href="#app-bar-with-responsive-menu"
+                    sx={{
+                      mr: 2,
+                      display: { xs: 'none', md: 'flex' },
+                      fontFamily: 'monospace',
+                      fontWeight: 700,
+                      letterSpacing: '.3rem',
+                      color: 'black',
+                      textDecoration: 'none',
+                    }}>{page}
+                    </Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            variant="h5"
+            //color="#003EB3"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'black',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'black', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
+          <Box>
+            <Button sx={{mx:2,my: 2, color: "#FFFFFF", backgroundColor:"#003EB3"}}
+            style={{borderRadius:'40px'}} variant="contained" 
+            // onClick={getGPTResponse}
+            >Register</Button>
+            <Button sx={{mx:2,my:2,color:"#000000"}} variant="outlined"
+            style={{borderRadius:'40px',borderColor:"#003EB3"}}>Login</Button>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
+
+
+
+function LandingPage() {
+  const nav = useNavigate();
+
+  const [imageFiles, setFiles] = useState(null)
+  const [uploadedImage, setUploadedImage] = useState(false)
+
+   function handleUpload(myFiles)
+    {
+        console.log("MY MAN"+myFiles)
+        if (myFiles == null) {
+            alert('Please select an image to upload.');
+            return;
+        }
+
+        const formData = new FormData();
+        // UPLOADS first image in the list of files
+        formData.append('image', myFiles[0]);
+
+      //  TODO: image processing
+      fetch('/api/process-food-image',{
+        method:'POST',
+        body: formData
+      }).then((response) => response.json()).then((data) => {
+        console.log("IMAGE PROCESSED RETURNED DATA:")
+        console.log(data)
+        //after some validation
+        setUploadedImage(true)
+      })
+    };
+    //handles file change when uploading food images
+    const handleFileChange = (event) => {
+      setFiles(event.target.files);
+      console.log(event.target.files+" FILES");
+      handleUpload(event.target.files)
+    };
+
+    const mainPage = (
+      <Box>
         <NavBar/>
+        <center>
+          <Container sx={{width:'45%',marginTop:'5%'}}>
+            <Typography component="h2" variant="h2" color="white"
+            sx={{marginTop:'5%', lineHeight: '1.5'}}>
+            <Box fontWeight='fontWeightMedium' display='inline'>Discover the Environmental Impact of Your Food</Box>
+            </Typography>
+          </Container>
+        </center>
+        <center>
+          <Typography component="h6" variant="h6" color="white">EcoFood</Typography>
+        </center>
+        <center>
+          <div>
+            <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                id="fileInput"
+                style={{display:'none'}}
+            />
+            <label htmlFor="fileInput">
+                <Button
+                    variant="contained"
+                    component="span"
+                    sx={{marginTop:'4vh',borderRadius:'20px'}}
+                    style={{backgroundColor:"#291477",color:"#FFFFFF"}}
+                    size="large"
+                    // onClick={handleUpload}
+                >
+                    Upload Images
+                </Button>
+            </label>
+          </div>
+          </center>
+      </Box>
+    )
+
+    const loadingScreen = (
+      <Container
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh', // Make the Container take the full viewport height
+      }}
+    >
+      <CircularProgress color="primary" size={100} /> {/* Adjust the size as needed */}
+      <Typography component="h2" color="white" variant="h6" sx={{ marginTop: 2 }}>
+        Loading...
+      </Typography>
+    </Container>
+    )
+
+    return (
+      <div>
+        {/* Top gradient section */}
+        <Container style={{backgroundColor: "#FAACA8",
+                backgroundImage: `linear-gradient(19deg, #003EB3 0%, #0074F0 100%)`,
+                width:'100vw',maxWidth:'100%',height:'100vh',maxHeight:'100%',paddingTop:'0.5%'}}>
+          
+          {/* Changes to loading status when user uploads an image */}
+          {uploadedImage? loadingScreen : mainPage}
+          
+        </Container>
+      </div>
     );
 }
 
